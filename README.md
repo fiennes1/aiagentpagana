@@ -4,56 +4,97 @@ Sistema de atendimento automatizado que utiliza IA para identificar a necessidad
 
 ## Tecnologias
 
+### Backend
 - Node.js + TypeScript
 - Express.js
 - SQLite (better-sqlite3)
 - OpenAI API (GPT-4o-mini)
 
+### Frontend
+- React 18 + TypeScript
+- Vite
+- CSS com variáveis (temas light/dark)
+
 ## Estrutura do Projeto
 
 ```
-src/
-├── config/          # Configurações da aplicação
-├── controllers/     # Controllers da API
-├── database/        # Conexão e schema do banco
-├── models/          # Tipos e interfaces
-├── repositories/    # Acesso ao banco de dados
-├── routes/          # Rotas da API
-├── services/        # Lógica de negócio e integração com IA
-└── server.ts        # Entrada da aplicação
+pagana/
+├── src/                    # Backend
+│   ├── config/             # Configurações da aplicação
+│   ├── controllers/        # Controllers da API
+│   ├── database/           # Conexão e schema do banco
+│   ├── models/             # Tipos e interfaces
+│   ├── repositories/       # Acesso ao banco de dados
+│   ├── routes/             # Rotas da API
+│   ├── services/           # Lógica de negócio e integração com IA
+│   └── server.ts           # Entrada da aplicação
+│
+└── frontend/               # Frontend React
+    └── src/
+        ├── components/     # Componentes React
+        ├── hooks/          # Custom hooks
+        ├── services/       # Integração com API
+        ├── styles/         # Estilos globais
+        └── App.tsx         # Componente principal
 ```
 
-## Instalacao
+## Instalação
 
-1. Clone o repositorio:
+1. Clone o repositório:
 ```bash
 git clone <url-do-repositorio>
 cd pagana
 ```
 
-2. Instale as dependencias:
+2. Instale as dependências do backend:
 ```bash
 npm install
 ```
 
-3. Configure as variaveis de ambiente:
+3. Instale as dependências do frontend:
+```bash
+cd frontend
+npm install
+cd ..
+```
+
+4. Configure as variáveis de ambiente:
 ```bash
 cp env.example .env
 ```
 
-4. Edite o arquivo `.env` e adicione sua chave da OpenAI:
+5. Edite o arquivo `.env` e adicione sua chave da OpenAI:
 ```
 PORT=3000
 OPENAI_API_KEY=sua_chave_aqui
 DATABASE_PATH=./database.db
 ```
 
-5. Inicie o servidor:
+## Executando a Aplicação
+
+A aplicação requer dois processos: backend e frontend.
+
+### Terminal 1 - Backend
 ```bash
 npm run dev
 ```
+O servidor estará disponível em `http://localhost:3000`.
 
-O servidor estara disponivel em `http://localhost:3000`.
+### Terminal 2 - Frontend
+```bash
+cd frontend
+npm run dev
+```
+A interface estará disponível em `http://localhost:5173`.
+
+## Funcionalidades do Frontend
+
+- Interface de chat para conversar com o agente de IA
+- Histórico de mensagens da conversa atual
+- Indicador de carregamento enquanto aguarda resposta
+- Alternância entre tema claro e escuro
+- Botão para iniciar nova conversa
+- Layout responsivo para desktop e mobile
 
 ## Endpoints da API
 
@@ -69,8 +110,8 @@ Envia uma mensagem para o agente de IA.
 }
 ```
 
-- `message` (obrigatorio): Mensagem do usuario
-- `conversationId` (opcional): ID da conversa existente. Se nao fornecido, uma nova conversa sera criada.
+- `message` (obrigatório): Mensagem do usuário
+- `conversationId` (opcional): ID da conversa existente. Se não fornecido, uma nova conversa será criada.
 
 **Response (201):**
 ```json
@@ -94,7 +135,7 @@ Envia uma mensagem para o agente de IA.
 }
 ```
 
-Quando a conversa e transferida para um atendente:
+Quando a conversa é transferida para um atendente:
 ```json
 {
   "conversationId": "550e8400-e29b-41d4-a716-446655440000",
@@ -108,10 +149,10 @@ Quando a conversa e transferida para um atendente:
 
 ### GET /api/messages
 
-Retorna o historico de mensagens.
+Retorna o histórico de mensagens.
 
 **Query Parameters:**
-- `conversationId` (opcional): Filtra por uma conversa especifica
+- `conversationId` (opcional): Filtra por uma conversa específica
 
 **Response (200):**
 ```json
@@ -121,29 +162,14 @@ Retorna o historico de mensagens.
     "status": "transferred",
     "sector": "financeiro",
     "summary": "Cliente solicita pagamento de boleto",
-    "messages": [
-      {
-        "id": "msg-uuid",
-        "conversationId": "550e8400-e29b-41d4-a716-446655440000",
-        "role": "user",
-        "content": "Quero pagar meu boleto",
-        "createdAt": "2026-01-03T10:00:00.000Z"
-      },
-      {
-        "id": "msg-uuid-2",
-        "conversationId": "550e8400-e29b-41d4-a716-446655440000",
-        "role": "assistant",
-        "content": "Vou te transferir para o setor Financeiro...",
-        "createdAt": "2026-01-03T10:00:01.000Z"
-      }
-    ]
+    "messages": [...]
   }
 ]
 ```
 
 ### GET /health
 
-Verifica se o servidor esta funcionando.
+Verifica se o servidor está funcionando.
 
 **Response (200):**
 ```json
@@ -153,47 +179,26 @@ Verifica se o servidor esta funcionando.
 }
 ```
 
-## Testando com Postman
+## Scripts Disponíveis
 
-### 1. Verificar saude do servidor
+### Backend
+- `npm run dev` - Inicia o servidor em modo desenvolvimento
+- `npm run build` - Compila o TypeScript
+- `npm start` - Inicia o servidor compilado
+- `npm run migrate` - Executa as migrações do banco
 
-- Metodo: GET
-- URL: `http://localhost:3000/health`
+### Frontend
+- `npm run dev` - Inicia o servidor de desenvolvimento
+- `npm run build` - Compila para produção
+- `npm run preview` - Visualiza a build de produção
 
-### 2. Iniciar uma nova conversa
+## Setores de Transferência
 
-- Metodo: POST
-- URL: `http://localhost:3000/api/messages`
-- Headers: `Content-Type: application/json`
-- Body (raw JSON):
-```json
-{
-  "message": "Olá, preciso de ajuda"
-}
-```
-
-### 3. Continuar uma conversa existente
-
-- Metodo: POST
-- URL: `http://localhost:3000/api/messages`
-- Headers: `Content-Type: application/json`
-- Body (raw JSON):
-```json
-{
-  "conversationId": "ID_RETORNADO_NA_RESPOSTA_ANTERIOR",
-  "message": "Quero pagar meu boleto que vence hoje"
-}
-```
-
-### 4. Ver historico de todas as conversas
-
-- Metodo: GET
-- URL: `http://localhost:3000/api/messages`
-
-### 5. Ver historico de uma conversa especifica
-
-- Metodo: GET
-- URL: `http://localhost:3000/api/messages?conversationId=ID_DA_CONVERSA`
+| Setor | Exemplos de Solicitação |
+|-------|-------------------------|
+| Vendas | Compra, preços, descontos, negociação |
+| Suporte | Reclamações, problemas técnicos, serviço bloqueado |
+| Financeiro | Pagamentos, boletos, estornos, nota fiscal |
 
 ## Fluxos de Teste
 
@@ -215,19 +220,3 @@ Verifica se o servidor esta funcionando.
 ### Teste Fora de Contexto
 1. "Vocês sabem se vai chover hoje?"
 2. A IA deve recusar educadamente e redirecionar para o atendimento
-
-## Scripts Disponiveis
-
-- `npm run dev` - Inicia o servidor em modo desenvolvimento
-- `npm run build` - Compila o TypeScript
-- `npm start` - Inicia o servidor compilado
-- `npm run migrate` - Executa as migracoes do banco
-
-## Setores de Transferencia
-
-| Setor | Exemplos de Solicitacao |
-|-------|-------------------------|
-| Vendas | Compra, precos, descontos, negociacao |
-| Suporte | Reclamacoes, problemas tecnicos, servico bloqueado |
-| Financeiro | Pagamentos, boletos, estornos, nota fiscal |
-
