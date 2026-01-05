@@ -12,6 +12,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: inherit;
+  min-width: 145px;
 }
 
 .theme-toggle:hover {
@@ -22,5 +23,10 @@
 
 .theme-toggle svg {
   flex-shrink: 0;
+}
+
+.theme-toggle span {
+  min-width: 85px;
+  text-align: left;
 }
 
